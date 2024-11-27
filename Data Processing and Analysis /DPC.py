@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from mpl_toolkits.mplot3d import Axes3D  # For 3D plotting
-
+np.random.seed(16)
 # Section 2: Load and Extract Calibration Data from Excel
 # -------------------------------------------------------
 data = pd.read_csv('Raw_data_BOP.csv')
