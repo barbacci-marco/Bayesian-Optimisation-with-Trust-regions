@@ -1,0 +1,6 @@
+Python version: 3.12.4
+NumPy version: 2.0.0
+Pandas version: 2.2.3
+Matplotlib version: 3.9.0
+scikit-learn version: 1.5.1
+scikit-optimize version: 0.10.2
