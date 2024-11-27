@@ -1,6 +1,8 @@
 # **Gaussian Process Bayesian Optimization (GPBO) Model**
 
-Note: At the time of this project i was at the start of my third year chemical engineering degree and in a lab decided to apply Bayesian Optimisation. Initialy due to lack of time I was not able to develop my own bayesian optimisation tool so this work is an expansion on my previous work (which i believe deserves its own repository) which allows for a good model comparison to the gp minimize from scikit learn.
+Note: At the time of this project i was at the start of my third year chemical engineering degree and in a lab decided to apply Bayesian Optimisation. Initialy due to lack of time I was not able to develop my own bayesian optimisation tool so this work is an expansion on my previous work (which i believe deserves its own repository) which allows for a good model comparison to the gp minimize from scikit learn. For the original repository where details of the optimisation process are explained refer to the link below:
+
+https://github.com/barbacci-marco/Optimization-of-Methanol-Water-Distillation-Process-Using-Bayesian-Optimization/tree/main 
 
 ---
 
@@ -209,7 +211,12 @@ plt.show()
 - Rasmussen, C. E., & Williams, C. K. I. (2006). **Gaussian Processes for Machine Learning**. MIT Press.
 - Brochu, E., Cora, V. M., & de Freitas, N. (2010). **A Tutorial on Bayesian Optimization of Expensive Cost Functions, with Application to Active User Modeling and Hierarchical Reinforcement Learning**. arXiv preprint arXiv:1012.2599.
 - Nocedal, J., & Wright, S. J. (2006). **Numerical Optimization**. Springer.
-
+- E. A. del Rio Chanona, P. Petsagkourakis, E. Bradford, J. E. Alves Graciano, B. Chachuat,
+Real-time optimization meets Bayesian optimization and derivative-free optimization: A tale of modifier adaptation, Computers & Chemical Engineering, Volume 147, 2021, 107249, ISSN 0098-1354, https://doi.org/10.1016/j.compchemeng.2021.107249.
+(https://www.sciencedirect.com/science/article/pii/S0098135421000272)
+- Shi, Y. (2021) Gaussian processes, not quite for dummies, The Gradient. Available at: https://thegradient.pub/gaussian-process-not-quite-for-dummies/ (Accessed: 21 November 2024).
+- Louppe, G. and Kumar, M. (2017) Bayesian optimization with SKOPT, scikit. Available at: https://scikit-optimize.github.io/stable/auto_examples/bayesian-optimization.html (Accessed: 21 November 2024).
+- Dürholt, J.P. et al. (2024) BoFire: Bayesian Optimization Framework intended for real experiments, arXiv.org. Available at: https://arxiv.org/abs/2408.05040 (Accessed: 01 November 2024). 
 ---
 
 ## **License**
