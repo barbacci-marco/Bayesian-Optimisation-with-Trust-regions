@@ -2,7 +2,7 @@ from GPBO import bayesian_optimization_with_trust_region
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D 
+from mpl_toolkits.mplot3d import Axes3D             # Import 3D plotting toolkit for matplotlib
 
 np.random.seed(16)
 # Step 1: Read Data from CSV Files
@@ -379,6 +379,7 @@ plt.show()
 
 # Step 19: Visualization of Profit Function over Reflux Ratios and Distillate Flow Rates
 # --------------------------------------------------------------------------------------
+
 # Create a grid of reflux ratios and distillate flow rates
 reflux_ratios_plot = np.linspace(reflux_ratio_min, reflux_ratio_max, 50)
 distillate_flow_rates_plot = np.linspace(distillate_flow_rate_min, distillate_flow_rate_max, 50)
@@ -389,12 +390,12 @@ profit_grid = np.zeros_like(RR_grid)
 
 for i in range(RR_grid.shape[0]):
     for j in range(RR_grid.shape[1]):
-        reflux_ratio = RR_grid[i, j]
-        distillate_flow_rate = DFR_grid[i, j]
-        reflux_flow_rate = reflux_ratio * distillate_flow_rate  # Compute reflux flow rate
-        params = [reflux_flow_rate, distillate_flow_rate]
+        rr = RR_grid[i, j]
+        dfr = DFR_grid[i, j]
+        reflux_flow_rate = rr * dfr  # Compute reflux flow rate
+        params = [reflux_flow_rate, dfr]
         objective_val = cost_function(params)
-        profit_grid[i, j] = -objective_val  # Convert back to profit
+        profit_grid[i, j] = objective_val  # Convert back to profit
 
 # Plot the profit contours
 plt.figure(figsize=(12, 8))
@@ -403,7 +404,7 @@ plt.colorbar(contour, label='Profit per Batch (£)')
 
 # Plot the main data points
 plt.scatter(
-    reflux_ratio,
+    reflux_ratio,  # Use the original array of reflux ratios
     Distillate_flowrate,
     color='white',
     edgecolor='black',
@@ -439,6 +440,7 @@ plt.show()
 
 # Step 20: Visualization of the Optimal Point with Respect to the Data
 # --------------------------------------------------------------------
+
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111, projection='3d')
 
@@ -491,6 +493,7 @@ plt.show()
 
 # Step 21: Purity Surface Plot
 # ----------------------------
+
 # Create a grid of distillate and reflux flow rates
 distillate_range = np.linspace(distillate_flow_rate_min, distillate_flow_rate_max, 50)
 reflux_range = np.linspace(Reflux_flowrate.min(), Reflux_flowrate.max(), 50)
@@ -540,47 +543,28 @@ ax.legend()
 fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5, label='Purity (Fraction)')
 plt.show()
 
-# Step 22: Energy Consumption Surface Plot Colored by Purity (Without Normalization)
-# ----------------------------------------------------------------------------------
-
+# Step 20: Energy Consumption Surface Plot
+# ----------------------------------------
 # Predict energy consumption over the grid
 energy_grid = energy_function(D_grid, R_grid)
 
-# Predict purity over the grid
-purity_grid = purity_function(D_grid, R_grid)
-
-# Import colormap
-from matplotlib import cm
-
-# Map purity values directly to colors
-colors = cm.viridis(purity_grid)
-
-# Plot the energy consumption surface colored by purity
+# Plot the energy consumption surface
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111, projection='3d')
 
 surf = ax.plot_surface(
-    D_grid, R_grid, energy_grid,
-    facecolors=colors,
+    D_grid, R_grid, energy_grid/1000,
+    cmap='plasma',
     alpha=0.8,
     edgecolor='none'
 )
-
-# Create a ScalarMappable and add a colorbar
-from matplotlib.colors import Normalize
-
-norm = Normalize(vmin=purity_grid.min(), vmax=purity_grid.max())
-
-mappable = cm.ScalarMappable(norm=norm, cmap='viridis')
-mappable.set_array([])
-fig.colorbar(mappable, ax=ax, shrink=0.5, aspect=5, label='Purity (Fraction)')
 
 # Overlay main data points
 ax.scatter(
     Distillate_flowrate,
     Reflux_flowrate,
-    energy_consumptions,
-    color='black',
+    energy_consumptions/1000,
+    color='green',
     label='Main Data',
     edgecolor='k'
 )
@@ -589,34 +573,26 @@ ax.scatter(
 ax.scatter(
     validation_Distillate_flowrate,
     validation_Reflux_flowrate,
-    validation_energy_consumption,
-    color='red',
-    s=100,
+    validation_energy_consumption/1000,
+    color='blue',
     label='Validation Data',
     edgecolor='k'
 )
-
-# Calculate optimal reflux flow rate and energy consumption
-optimal_reflux_flow_rate = optimal_reflux_ratio * optimal_distillate_flow_rate
-optimal_energy_consumption = energy_function(
-    optimal_distillate_flow_rate, optimal_reflux_flow_rate
-)
-
 # Plot optimal point
 ax.scatter(
     optimal_distillate_flow_rate,
     optimal_reflux_flow_rate,
-    optimal_energy_consumption,
-    color='yellow',
-    s=100,
+    predicted_energy/1000,
+    color='red',
+    s=50,
     label='Optimal Point',
     edgecolor='k'
 )
 
 ax.set_xlabel('Distillate Flow Rate (L/h)')
 ax.set_ylabel('Reflux Flow Rate (L/h)')
-ax.set_zlabel('Energy Consumption (kWh)')
-ax.set_title('Energy Consumption Surface Colored by Purity (Without Normalization)')
-ax.legend()
+ax.set_zlabel('Energy Consumption (MWh)')
+ax.legend(loc='lower left')
 
+fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5, label='Energy Consumption (kWh)')
 plt.show()
