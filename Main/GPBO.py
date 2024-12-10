@@ -1,12 +1,14 @@
 import numpy as np
 import math
+
 np.random.seed(16)
+
 # RBF Kernel Function
-def rbf_kernel(X1, X2, length_scale=2, sigma_f=1.0):
+def rbf_kernel(X1, X2, length_scale=2):
     X1 = np.atleast_2d(X1)
     X2 = np.atleast_2d(X2)
     sqdist = np.sum((X1[:, np.newaxis, :] - X2[np.newaxis, :, :]) ** 2, axis=2)
-    return sigma_f**2 * np.exp(-0.5 / length_scale**2 * sqdist)
+    return np.exp(-0.5 / length_scale**2 * sqdist)
 
 # Standard Normal PDF
 def standard_normal_pdf(z):
@@ -60,6 +62,7 @@ def expected_improvement(X, X_train, y_train, mu, sigma, f_best, xi=0.01):
     ei = (mu - f_best - xi) * Phi + sigma * phi
     return ei
 
+
 # Initialize Trust Region
 def initialize_trust_region(bounds, initial_radius):
     trust_region_center = None
@@ -68,7 +71,7 @@ def initialize_trust_region(bounds, initial_radius):
 
 def update_trust_region(trust_region_center, trust_region_radius, X_new, y_new, y_best, bounds, shrink_factor=0.8, expand_factor=1.3):
     '''Update the trust region based on the new observation for multi-dimensional input.'''
-    if y_new < y_best:
+    if  y_best< y_new:
         trust_region_radius *= expand_factor
     else:
         trust_region_radius *= shrink_factor
@@ -93,7 +96,7 @@ def random_acquisition_maximization(acquisition, X_train, y_train, kernel, trust
     # Compute GP posterior for samples
     mu, cov = gp_posterior(X_train, y_train, samples, kernel, sigma_y)
     sigma = np.sqrt(np.diag(cov))
-    f_best = np.min(y_train)
+    f_best = np.max(y_train)
     
     # Compute acquisition values
     acquisition_values = np.array([
@@ -113,7 +116,7 @@ def bayesian_optimization_with_trust_region(n_iters, sample_loss, bounds, n_pre_
     X_train = np.random.uniform(bounds[:, 0], bounds[:, 1], size=(n_pre_samples, bounds.shape[0]))
     y_train = np.array([sample_loss(x) for x in X_train])
     
-    y_best_idx = np.argmin(y_train)
+    y_best_idx = np.argmax(y_train)
     trust_region_center = X_train[y_best_idx]
     trust_region_radius = initial_trust_radius * np.ones(bounds.shape[0])
     
@@ -133,7 +136,7 @@ def bayesian_optimization_with_trust_region(n_iters, sample_loss, bounds, n_pre_
         X_train = np.vstack((X_train, X_next.reshape(1, -1)))
         y_train = np.append(y_train, y_next)
         
-        y_best = y_train[np.argmin(y_train)]
+        y_best = y_train[np.argmax(y_train)]
        
         trust_region_center, trust_region_radius = update_trust_region(
             trust_region_center, trust_region_radius, X_next, y_next, y_best, bounds
