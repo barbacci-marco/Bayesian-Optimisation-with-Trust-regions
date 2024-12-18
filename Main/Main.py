@@ -186,7 +186,7 @@ for i in range(len(purities)):
     profit = revenue - energy_cost
 
     # Append the negative profit to objective_values
-    objective_values.append(-profit)  # Negative for consistency with plotting
+    objective_values.append(profit)  # Negative for consistency with plotting
 
 objective_values = np.array(objective_values)
 
@@ -208,7 +208,7 @@ validation_energy_cost = validation_energy_per_batch * electricity_cost_per_kWh 
 validation_profit = validation_revenue - validation_energy_cost
 
 # Negative profit for consistency with objective function
-validation_objective_value = -validation_profit
+validation_objective_value = validation_profit
 X = Reflux_flowrate, Distillate_flowrate
 
 # Step 11: Define the Cost Function
@@ -264,12 +264,18 @@ search_space = np.array([
 # ----------------------------------
 # Run Bayesian Optimization with Trust Regions
 X_res, Y_res, iterations = bayesian_optimization_with_trust_region(
-    n_iters=30,
-    sample_loss= cost_function,
-    bounds=search_space,
+    n_iters=50,
+    sample_loss=cost_function,
+    bounds= search_space,
     n_pre_samples=5,
+    length_scale=2,  # This is now passed into **hyperparams automatically
     alpha=1e-8,
-    initial_trust_radius=0.5  # recommend adjusting 
+    initial_trust_radius=0.5,
+    xi=0.01,
+    shrink_factor=0.8,
+    expand_factor=1.2,
+    num_samples=1000
+    
 )
 
 # Step 15: Extract and Display the Optimal Parameters and Maximum Profit
@@ -448,7 +454,7 @@ ax = fig.add_subplot(111, projection='3d')
 scatter = ax.scatter(
     reflux_ratio,
     Distillate_flowrate,
-    -objective_values,  # Convert back to profit
+    objective_values,  # Convert back to profit
     c=purities_percent,
     cmap='viridis',
     alpha=0.7,
@@ -460,7 +466,7 @@ scatter = ax.scatter(
 ax.scatter(
     validation_reflux_ratio,
     validation_Distillate_flowrate,
-    -validation_objective_value,  # Convert back to profit
+    validation_objective_value,  # Convert back to profit
     color='red',
     s=100,
     label='Validation Data',
